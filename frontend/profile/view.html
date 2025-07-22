@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #fbc2eb, #a6c1ee);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-container {
+            background: #fff;
+            padding: 2rem 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            width: 350px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #8e44ad;
+        }
+        #profileData p {
+            margin: 0.7rem 0;
+            font-size: 1.05rem;
+            color: #333;
+        }
+        button {
+            width: 100%;
+            padding: 0.7rem;
+            background: #8e44ad;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 1.2rem;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #5e3370;
+        }
+        .edit-profile {
+            margin-top: 10px;
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>Your Profile</h2>
+        <div id="profileData">
+            <!-- Filled by JavaScript -->
+        </div>
+        <button onclick="logout()">Logout</button>
+        <button onclick="window.location.href='edit.html'" class="edit-profile">Edit Profile</button>
+    </div>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        // Check if user is logged in
+        checkAuth(); // ✅ very important for security
+
+        // Use the improved loadProfile function from auth.js if available
+        if (typeof loadProfile === 'function') {
+            loadProfile();
+        } else {
+            // Fallback: basic profile loader
+            async function fallbackLoadProfile() {
+                const token = localStorage.getItem('jwtToken');
+                if (!token) {
+                    window.location.href = '../auth/login.html';
+                    return;
+                }
+                try {
+                    const response = await fetch('http://localhost:5001/api/profile', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (response.status === 401 || response.status === 403) {
+                        alert('Session expired or unauthorized. Please login again.');
+                        localStorage.removeItem('jwtToken');
+                        window.location.href = '../auth/login.html';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        let errorMsg = 'Failed to load profile.';
+                        try {
+                            const errorData = await response.json();
+                            errorMsg = errorData.error || errorMsg;
+                            if (errorData.details) errorMsg += ` (${errorData.details})`;
+                        } catch (e) {}
+                        alert(errorMsg);
+                        return;
+                    }
+
+                    const data = await response.json();
+                    document.getElementById('profileData').innerHTML = `
+                        <p><strong>Username:</strong> ${data.username}</p>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                    `;
+                } catch (err) {
+                    alert('Network error. Please try again later.');
+                    console.error(err);
+                }
+            }
+            fallbackLoadProfile();
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('jwtToken');
+            window.location.href = '../auth/login.html';
+        }
+    </script>
+
+</body>
+</html>

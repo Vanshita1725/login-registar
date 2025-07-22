@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #fbc2eb, #a6c1ee);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-container {
+            background: #fff;
+            padding: 2rem 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            width: 350px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #8e44ad;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #333;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 0.7rem;
+            background: #8e44ad;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: #5e3370;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            color: #8e44ad;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>Edit Profile</h2>
+        <form id="editProfileForm">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <button type="submit">Save Changes</button>
+        </form>
+        <a href="view.html" class="back-link">Back to Profile</a>
+    </div>
+    <script>
+        // Redirect to login if not authenticated
+        if (!localStorage.getItem('jwtToken')) {
+            window.location.href = '../auth/login.html';
+        }
+
+        // Load current profile data
+        async function loadProfile() {
+            const token = localStorage.getItem('jwtToken');
+            const response = await fetch('http://localhost:5001/api/profile', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.status === 401 || response.status === 403) {
+                alert('Session expired or unauthorized. Please login again.');
+                localStorage.removeItem('jwtToken');
+                window.location.href = '../auth/login.html';
+                return;
+            }
+            const data = await response.json();
+            document.getElementById('username').value = data.username || '';
+            document.getElementById('email').value = data.email || '';
+        }
+        loadProfile();
+
+        // Handle form submit
+        document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const token = localStorage.getItem('jwtToken');
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            try {
+                const response = await fetch('http://localhost:5001/api/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ username, email })
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    alert('Session expired or unauthorized. Please login again.');
+                    localStorage.removeItem('jwtToken');
+                    window.location.href = '../auth/login.html';
+                    return;
+                }
+
+                if (!response.ok) {
+                    let errorMsg = 'Failed to update profile.';
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.error || errorMsg;
+                        if (errorData.details) errorMsg += ` (${errorData.details})`;
+                    } catch (e) {}
+                    alert(errorMsg);
+                    return;
+                }
+
+                alert('Profile updated successfully!');
+                window.location.href = 'view.html';
+            } catch (err) {
+                alert('Network error. Please try again later.');
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+</html>

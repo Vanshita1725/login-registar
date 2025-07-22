@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            background-color: #f1f1f1  ;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-container {
+            background: #f1f1f1;
+            padding: 2rem 2.5rem;
+            margin-top: 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            width: 350px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #3498db;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: #333;
+        }
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 0.7rem;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: #217dbb;
+        }
+        p {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input[type="password"],
+        .password-wrapper input[type="text"] {
+            width: 100%;
+            height: 48px;              /* Set fixed height */
+            padding: 0 2.5rem 0 0.8rem;/* Right padding for icon, left for text */
+            border: 1px solid #ccc;
+            border-radius: 10px;       /* Match your screenshot */
+            font-size: 1.2rem;
+            background: #f0f6ff;       /* Light blue background */
+            box-sizing: border-box;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;               /* Set width */
+            height: 32px;              /* Set height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;           /* Icon size */
+            background: transparent;
+            border: none;
+            padding: 0;
+            line-height: 1;
+            user-select: none;
+        }
+        .password-wrapper input[type="password"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        input[type="email"] {
+            width: 100%;
+            height: 48px;
+            padding: 0 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            background: #eaf2ff;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    
+        <div class="logo">
+            <img src="../assets/wordpress.png" alt="WordPress Logo" style="width:84px;height:84px;display:block;margin:0 auto;" />
+       
+        <div class="auth-container">
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" required>
+                    <span class="password-toggle" id="passwordToggle">
+  <i class="fa-regular fa-eye"></i>
+</span>
+                </div>
+            </div>
+            
+            <button type="submit">Login</button>
+        </form>
+    </div>
+        <p>Don't have an account? <a href="register.html">Register</a></p>
+    </div>
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>
